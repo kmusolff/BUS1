@@ -1,61 +1,53 @@
 import os
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 from cryptography.hazmat.backends import default_backend
-from cryptography.hazmat.primitives import padding
 
+from cryptography.hazmat.primitives import padding
 
 class AES:
 
-    def __init__(self):
-        self.backend = default_backend()
+	def __init__(self):
+		self._key = os.urandom(32)
+		self._iv = os.urandom(16)
+		self._backend = default_backend()
+		self._cipher = Cipher(algorithms.AES(self._key), modes.CBC(self._iv), backend=self._backend)
+		
 
-    def load_key(self, size=32):
-        self.key = os.urandom(size)
+	def _pad(self,message):
+		padder = padding.PKCS7(128).padder()
+		padded_data = padder.update(message.encode('utf-8'))
+		padded_data += padder.finalize()
 
-    def load_iv(self, size=16):
-        self.iv = os.urandom(size)
+		return padded_data
 
-    def load_message(self):
-        file = open("message.txt", "r")
-        message = file.read()
-        file.close()
-        return message
+	def _unpad(self, message):
+		unpadder = padding.PKCS7(128).unpadder()
+		unpadded_data = unpadder.update(message) + unpadder.finalize()
 
-    def save_cipher(self, message):
-        file = open("cipher.txt", "w")
-        file.write(message)
-        file.close()
+		return unpadded_data
 
-    def load_cipher(self):
-        file = open("cipher.txt", "r")
-        loadedCipher = file.read()
-        file.close()
-        return loadedCipher
+	def encrypt(self):
+		encryptor = self._cipher.encryptor()
+		self._message = self._pad(self._message)
+		self._message = encryptor.update(self._message) + encryptor.finalize()
+		return self._message
+		
 
-    def save_message(self, message):
-        file = open("decrypted_cipher.txt", "w")
-        file.write(message)
-        file.close()
+	def decrypt(self):
+		decryptor = self._cipher.decryptor()
+		self._message = decryptor.update(self._message) + decryptor.finalize()
+		self._message = self._unpad(self._message)
+		return self._message
 
-    def encrypt(self):
-        self.load_key()
-        self.load_iv()
-        message = self.load_message()
-        message = message.encode('utf-8', 'strict')
-        padder = padding.PKCS7(128).padder()
-        padded_message = padder.update(bytes(message))
-        print(len(padded_message))
-        self.cipher = Cipher(algorithms.AES(self.key), modes.CBC(self.iv), self.backend)
-        encryptor = self.cipher.encryptor()
-        self.ct = encryptor.update(bytes(str(padded_message), 'utf-8'))
-                  #+ encryptor.finalize()
-        encryptedMessage = str(self.ct)
-        self.save_cipher(encryptedMessage)
+	def readMessage(self):
+		with open("message.txt", "r") as message:
+	  		self._message = message.read()		
+		print(self._message)
 
-    def decrypt(self):
-        decryptor = self.cipher.decryptor()
-        decrypted_message = decryptor.update(self.ct)
-                            #+ decryptor.finalize()
-        unpadder = padding.PKCS7(128).unpadder()
-        data = unpadder.update(decrypted_message)
-        self.save_message(str(data))
+
+
+
+
+
+
+
