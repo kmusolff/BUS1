@@ -42,7 +42,6 @@ class AES:
 	def readMessage(self):
 		with open("message.txt", "r") as message:
 	  		self._message = message.read()		
-		print(self._message)
 
 
 
