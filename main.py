@@ -8,7 +8,7 @@ m = 6901709956983125056083296315037643764513315461628022928206686401691329919296
 png = PrimeNumberGenerator()
 
 
-aes = AES()
+aes = AES('EBC')
 aes.readMessage()
 aes.encrypt()
 print(aes.decrypt().decode('utf-8'))

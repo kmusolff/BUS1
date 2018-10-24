@@ -6,11 +6,14 @@ from cryptography.hazmat.primitives import padding
 
 class AES:
 
-	def __init__(self):
+	def __init__(self, mode='CBC'):
 		self._key = os.urandom(32)
-		self._iv = os.urandom(16)
 		self._backend = default_backend()
-		self._cipher = Cipher(algorithms.AES(self._key), modes.CBC(self._iv), backend=self._backend)
+		if mode == 'CBC':
+			self._iv = os.urandom(16)
+			self._cipher = Cipher(algorithms.AES(self._key), modes.CBC(self._iv), backend=self._backend)
+		else:
+			self._cipher = Cipher(algorithms.AES(self._key), modes.ECB(), backend=self._backend)
 		
 
 	def _pad(self,message):
