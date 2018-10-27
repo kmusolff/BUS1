@@ -10,7 +10,14 @@ png = PrimeNumberGenerator()
 
 aes = AES()
 aes.prepare_encrypt('CBC')
-aes.encrypt_image('eiti.jpg', 'eiti_ecb.bmp', 'eiti_data', 'eiti_key_ecb')
-aes.prepare_decrypt('CBC', 'eiti_key_ecb')
+aes.encrypt_image('eiti.jpg', 'eiti_ecb.bmp', 'eiti_data', 'eiti_key_ecb', 'eiti_iv')
+
+aes.prepare_decrypt('CBC', 'eiti_key_ecb', 'eiti_iv')
 aes.decrypt_image('eiti_data', 'eiti_ecb_decyrpt.jpg')
 
+
+aes.prepare_encrypt('CBC')
+aes.encrypt_txt('message.txt', 'encrypted_message.txt', 'message_key', 'message_iv')
+
+aes.prepare_decrypt('CBC', 'message_key', 'message_iv')
+aes.decrypt_txt('encrypted_message.txt', 'decrypted_message.txt')
