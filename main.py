@@ -8,7 +8,9 @@ m = 6901709956983125056083296315037643764513315461628022928206686401691329919296
 png = PrimeNumberGenerator()
 
 
-aes = AES('EBC')
-aes.readMessage()
-aes.encrypt()
-print(aes.decrypt())
+aes = AES()
+aes.prepare_encrypt('CBC')
+aes.encrypt_image('eiti.jpg', 'eiti_ecb.bmp', 'eiti_data', 'eiti_key_ecb')
+aes.prepare_decrypt('CBC', 'eiti_key_ecb')
+aes.decrypt_image('eiti_data', 'eiti_ecb_decyrpt.jpg')
+
