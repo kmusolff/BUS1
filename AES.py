@@ -27,25 +27,33 @@ class AES:
 		unpadder = padding.PKCS7(128).unpadder()
 		unpadded_data = unpadder.update(message) + unpadder.finalize()
 
-		return unpadded_data
+		return unpadded_data.decode('utf-8')
 
 	def encrypt(self):
 		encryptor = self._cipher.encryptor()
 		self._message = self._pad(self._message)
 		self._message = encryptor.update(self._message) + encryptor.finalize()
-		return self._message
+		self.writeCipher(self._message)
 		
 
 	def decrypt(self):
 		decryptor = self._cipher.decryptor()
 		self._message = decryptor.update(self._message) + decryptor.finalize()
 		self._message = self._unpad(self._message)
+		self.writeDecryptedMessage()
 		return self._message
 
 	def readMessage(self):
-		with open("message.txt", "r") as message:
-	  		self._message = message.read()		
+		with open("message.txt", "r") as file:
+	  		self._message = file.read()		
 
+	def writeCipher(self, msg):
+		with open("cipher.txt", "wb") as file:
+	  		file.write(msg)
+
+	def writeDecryptedMessage(self):
+		with open("decrypted_message.txt", "w") as file:
+			file.write(self._message)	
 
 
 
